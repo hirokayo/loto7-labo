@@ -1,0 +1,2394 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+ 
+<meta charset="UTF-8">
+
+<meta name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<meta name="theme-color"
+content="#0d47a1">
+
+<title>ロト7 Labo</title>
+
+<link rel="manifest"
+href="manifest.json">
+
+<style>
+/* =============================
+  基本
+============================= */
+body{
+  font-family: Arial;
+  text-align:center;
+
+  /* 背景画像 */
+  background-image: url("bg.jpg");
+  /* 画面いっぱいに表示 */
+  background-size: cover;
+
+   /* ↓ これ追加 */
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* スクロールしても固定 */
+  background-attachment: fixed;
+
+  /* 少し暗くする（見やすくする） */
+  background-color: rgba(0,0,0,0.3);
+  background-blend-mode: darken;
+}
+
+.hidden{
+  display:none;
+}
+
+.box{
+  background: rgba(255,255,255,0.9);
+  padding:20px;
+  margin:20px auto;
+  border-radius:10px;
+  width:90%;
+  max-width:900px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* =============================
+  ボタン
+============================= */
+button{
+  padding:8px 15px;
+  margin:5px;
+  cursor:pointer;
+  border:none;
+  border-radius:8px;
+  opacity:0.7;
+  background:#90caf9;
+  color:#0d47a1;
+}
+
+button:hover{
+  background:#64b5f6;
+}
+
+button:active{
+  background:#ffab91;
+  color:#bf360c;
+}
+
+button.active{
+  background:#ffccbc;
+  border:2px solid #ff8a65;
+  font-weight:bold;
+}
+
+/* =============================
+  数字表示 共通
+============================= */
+.numbers{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap: 8px;
+}
+
+.numbers > span{
+  display:inline-flex;
+  padding:10px 14px;
+  margin:6px;
+  border-radius:999px;
+
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+
+  font-size:14px;
+  line-height:1.3;
+  text-align:center;
+
+  min-width:60px;
+}
+
+.numbers span small{
+  font-size:13px;
+  margin-top:2px;
+}
+
+/* =============================
+  ゾーン専用
+============================= */
+.zone{
+  padding:14px 18px;
+}
+
+/* =============================
+  ホット
+============================= */
+.hot1{ background:#ffcdd2; }
+.hot2{ background:#ef9a9a; }
+.hot3{ background:#e57373; }
+.hot4{ background:#ef5350; }
+.hot5{ background:#c62828; }
+
+/* =============================
+  ホット（背景＋文字連動）
+============================= */
+
+.hot1{
+  background:#ffebee;
+  color:#b71c1c; /* 濃い赤 */
+}
+
+.hot2{
+  background:#ffcdd2;
+  color:#b71c1c;
+}
+
+.hot3{
+  background:#ef9a9a;
+  color:#7f0000;
+}
+
+.hot4{
+  background:#ef5350;
+  color:#ffffff; /* 白 */
+}
+
+.hot5{
+  background:#c62828;
+  color:#ffffff;
+}
+
+/* =============================
+  コールド
+============================= */
+.cold1{ background:#bbdefb; }
+.cold2{ background:#90caf9; }
+.cold3{ background:#64b5f6; }
+.cold4{ background:#42a5f5; }
+.cold5{ background:#1565c0; }
+
+/* =============================
+  コールド（背景＋文字連動）
+============================= */
+
+.cold1{
+  background:#e3f2fd;
+  color:#0d47a1; /* 濃い青 */
+}
+
+.cold2{
+  background:#bbdefb;
+  color:#0d47a1;
+}
+
+.cold3{
+  background:#90caf9;
+  color:#0b3c91;
+}
+
+.cold4{
+  background:#42a5f5;
+  color:#ffffff; /* 白に切替 */
+}
+
+.cold5{
+  background:#1565c0;
+  color:#ffffff;
+}
+
+/* =============================
+  出現間隔
+============================= */
+.interval{
+  background:#b8860b;
+  color:#fff;
+  font-weight:bold;
+}
+
+/* =============================
+  合計値
+============================= */
+.sum-box{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  margin-top:10px;
+}
+
+.sum-item{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  margin:10px;
+}
+
+.sum-label{
+  font-size:12px;
+  color:#555;
+  margin-bottom:4px;
+  font-weight:bold;
+}
+
+.sum-value{
+  display:inline-flex;
+  justify-content:center;
+  align-items:center;
+
+  min-width:60px;
+  height:48px;
+  padding:0 18px;
+
+  border-radius:999px;
+
+  font-size:18px;
+  font-weight:bold;
+
+  background:#ffccbc;
+  color:#bf360c;
+}
+
+/*==============================
+ゾーン分析
+==============================*/
+.zone-circle{
+  display:inline-block;
+  margin:2px;
+  font-size:16px;
+  color:#3498db;
+}
+
+.zone-pattern{
+  min-width:70px;
+  height:48px;
+  padding:0 14px;
+
+  border-radius:999px;
+
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+
+  font-weight:bold;
+
+  font-size:14px;
+  line-height:1.3;
+}
+
+.zone-pattern small{
+  font-size:13px;
+  margin-top:2px;
+}
+
+/*==============================
+説明文の帯
+==============================*/
+.analysis-desc{
+  background-color:#fff8dc;
+
+  color:#8b6508;
+
+  font-weight:bold;
+
+  border:2px solid #ffd700;
+
+  padding:10px;
+  border-radius:8px;
+}
+
+/* =============================
+  その他カラー
+============================= */
+.normal{ background:#2196F3; }
+.bonus{ background:#43a047; }
+
+/* =============================
+  AI予想専用カラー
+============================= */
+.ai-num{
+  display:inline-flex;
+
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+
+  min-width:60px;
+  padding:10px 14px;
+  margin:6px;
+
+  border-radius:999px;
+
+  background:linear-gradient(45deg,#ff7043,#ffcc80);
+  color:#fff;
+
+  font-size:14px;
+  line-height:1.3;
+}
+
+.ai-desc{
+  margin:10px auto 15px;
+  padding:10px;
+
+  max-width:360px;
+
+  background:#fff3e0;
+  border-radius:10px;
+
+  color:#333;
+  font-size:14px;
+  line-height:1.6;
+
+  text-align:center;
+
+  font-weight:bold;
+}
+
+.active-ai{
+  background:#ffccbc;
+  border:2px solid #ff8a65;
+  font-weight:bold;
+}
+
+/* =============================
+  最新 点滅
+============================= */
+@keyframes blinkGold {
+
+  0%{
+    opacity:1;
+  }
+
+  50%{
+    opacity:0.3;
+  }
+
+  100%{
+    opacity:1;
+  }
+}
+
+.latest-badge{
+  font-size:26px;
+  font-weight:bold;
+
+  color:#b8860b;
+
+  text-shadow:
+    0 0 5px #ffeb3b,
+    0 0 10px #ff9800;
+
+  animation: blinkGold 1.2s infinite;
+}
+
+/* 最新数字 */
+.latest-main{
+  background:#d84315;
+  color:#fff;
+}
+
+.latest-bonus{
+  background:#fdd835;
+  color:#000 !important;
+}
+
+/* =============================
+  過去表示
+============================= */
+.past-main{
+  background:#bbdefb;
+  color:#000 !important;
+}
+
+.past-bonus{
+  background:#c8e6c9;
+  color:#000 !important;
+}
+
+/* =============================
+  テキスト
+============================= */
+.label{
+  font-size:12px;
+  font-weight:bold;
+  color:#555;
+}
+
+.desc-top{
+  margin:10px 0;
+  font-weight:bold;
+}
+
+.desc{
+  font-weight:bold;
+  color:#5d4037;
+  font-size:15px;
+  line-height:1.8;
+}
+
+/* =============================
+  ローディング
+============================= */
+#overlay{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.8);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  color:white;
+  font-size:20px;
+  z-index:999;
+}
+
+/* =============================
+  エラーメッセージ
+============================= */
+.error{
+  color: #ff4d4d;
+  font-weight:bold;
+  margin-top:8px;
+}
+
+.guide{
+  margin: 10px 0;
+  font-size: 14px;
+
+  color:#333;
+
+  font-weight:bold;
+}
+
+/*==============================
+分析メニューを選択してください
+=============================*/
+#analysisError{
+  margin-bottom: 10px;
+  font-size: 14px;
+  color:#333;
+
+  font-weight:bold;
+}
+
+/* =============================
+  タイトル
+============================= */
+.app-title{
+  font-size:32px;
+  font-weight:bold;
+
+  color:#b8860b;
+
+  margin-bottom:10px;
+
+  text-shadow:
+    2px 2px 6px rgba(0,0,0,0.8),
+    0 0 10px rgba(255,215,0,0.6);
+}
+
+/* =============================
+  説明文
+============================= */
+.app-desc{
+  font-size:15px;
+  line-height:1.8;
+
+  color:#5d4037;
+
+  text-shadow:
+    1px 1px 4px rgba(0,0,0,0.8);
+}
+
+/* =============================
+  予想チェック結果表示
+============================= */
+#checkResult .check-box{
+  margin:10px 0;
+  font-size:14px;
+  color:#333;
+  font-weight:bold;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div id="overlay">読み込み中...</div>
+
+<!-- タイトル -->
+<div class="box">
+
+   <h1 style="
+    color:#b8860b;
+    font-size:38px;
+    margin-bottom:10px;
+    text-shadow:
+      0 0 5px #ffd700,
+      0 0 10px #ffeb3b;
+  ">
+    ロト7 Labo
+  </h1>
+
+  <p style="
+    color:#5d4037;
+    font-size:16px;
+    font-weight:bold;
+  ">
+    過去のデータから出現しやすい数字を分析するサイトです。
+  </p>
+
+</div>
+
+<div class="box">
+
+  <div id="latestBox"></div>
+
+ <!-- =============================
+  過去抽選表示ボタン
+  ・history-btnクラスを付けることで
+    active制御をこのボタンだけに限定する
+============================= -->
+<div style="margin-top:10px;">
+  <h3 class="section-title">過去の抽選結果を表示します</h3>
+
+  <!-- 直近5回表示 -->
+  <button class="history-btn" onclick="loadHistoryDraws(5, event)">
+    直近5回
+  </button>
+
+  <!-- 直近10回表示 -->
+  <button class="history-btn" onclick="loadHistoryDraws(10, event)">
+    直近10回
+  </button>
+</div> 
+
+<div id="pastDraws"></div>
+
+<!-- 分析 -->
+<div class="box">
+
+<h2 style="
+  color:#b8860b;
+  text-shadow:
+    0 0 5px #ffeb3b,
+    0 0 10px #ff9800;
+">
+  分析メニュー
+</h2>
+
+<!-- 説明文 -->
+<div style="
+  background:rgba(255,248,220,0.9);
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:15px;
+  color:#5d4037;
+  font-size:14px;
+  font-weight:bold;
+">
+  分析したい項目を選択すると、
+  過去の抽選結果のデータを見ることができます。
+</div>
+
+<!-- 本数字ガイド -->
+<div id="targetError" class="guide">
+  本数字かボーナス数字を選択してください
+</div>
+
+<!-- 本数字 / ボーナス -->
+<button class="target-btn"
+  onclick="setTarget('main', event)">
+  本数字
+</button>
+
+<button class="target-btn"
+  onclick="setTarget('bonus', event)">
+  ボーナス数字
+</button>
+
+<!-- 分析メニューガイド -->
+<div id="analysisError" class="guide">
+  分析メニューを選択してください
+</div>
+
+<!-- メニュー -->
+<div id="mainMenu">
+
+  <button class="analysis-btn"
+    onclick="select('hot', event)">
+    ホットナンバー
+  </button>
+
+  <button class="analysis-btn"
+    onclick="select('cold', event)">
+    コールドナンバー
+  </button>
+
+  <button class="analysis-btn"
+    onclick="select('interval', event)">
+    出現間隔
+  </button>
+
+  <button class="analysis-btn"
+    onclick="select('oddEven', event)">
+    奇数偶数
+  </button>
+
+  <button class="analysis-btn"
+    onclick="select('sum', event)">
+    合計値
+  </button>
+
+  <button class="analysis-btn"
+    onclick="select('zone', event)">
+    ゾーン分析
+  </button>
+
+</div>
+
+<!-- ボーナス用 -->
+<div id="bonusMenu" style="display:none;">
+
+  <button class="analysis-btn"
+    onclick="select('hot', event)">
+    ホットナンバー
+  </button>
+
+  <button class="analysis-btn"
+    onclick="select('oddEven', event)">
+    奇数偶数
+  </button>
+
+  <button class="analysis-btn"
+    onclick="select('zone', event)">
+    ゾーン分析
+  </button>
+
+</div>
+
+<!-- 上説明 -->
+<p id="desc-top" class="desc"></p>
+
+<!-- 回数ガイド -->
+<div id="rangeError" class="guide">
+  分析回数を選択してください
+</div>
+
+<!-- 下説明 -->
+<p id="desc-bottom" class="desc"></p>
+
+<!-- 回数 -->
+<div id="range" class="range-area">
+
+  <button class="range-btn"
+    onclick="runAnalysis(10, event)">
+    10回
+  </button>
+
+  <button class="range-btn"
+    onclick="runAnalysis(20, event)">
+    20回
+  </button>
+
+  <button class="range-btn"
+    onclick="runAnalysis(30, event)">
+    30回
+  </button>
+
+  <button class="range-btn"
+    onclick="runAnalysis(50, event)">
+    50回
+  </button>
+
+  <button class="range-btn"
+    onclick="runAnalysis(70, event)">
+    70回
+  </button>
+
+  <button class="range-btn"
+    onclick="runAnalysis(100, event)">
+    100回
+  </button>
+
+</div>
+
+</div>
+
+<!-- 結果 -->
+<div id="result-main"></div>
+<div id="result-bonus"></div>
+
+</div>
+
+<!-- AI -->
+<div class="box">
+<h2>AI予想</h2>
+
+<div style="
+  margin:10px 0;
+  padding:10px;
+  background:#fff3e0;
+  border-radius:8px;
+  font-size:14px;
+  color:#333;
+  text-align:center;
+  font-weight:bold;
+">
+  過去のデータや分析メニューをもとにしてAIが出現しやすい数字を予想します。
+</div>
+
+<div class="ai-buttons">
+  <button id="aiBtn" onclick="predict()">AI予想</button>
+  <button onclick="closeAI()" class="close-ai-btn">閉じる</button>
+</div>
+
+<div id="ai"></div>
+</div>
+
+<!-- 予想チェック（統合版） -->
+<div class="box">
+  <h2>予想チェック</h2>
+
+  <!-- 🔥 説明文 -->
+  <div style="
+    margin:10px 0;
+    padding:10px;
+    background:#fff3e0;
+    border-radius:8px;
+    font-size:14px;
+    color:#333;
+    font-weight:bold;
+    text-align:center;
+  ">
+    予想した数字を7個選択して、過去データと照らし合わせて分析できます
+  </div>
+
+  <!-- 🔥 入力ボタン -->
+  <button onclick="openPicker()">数字を入力</button>
+
+  <!-- 🔥 選択した数字 -->
+   <h3 style="margin-top:15px;">
+     選択した数字
+     <button onclick="toggleSelected(event)" style="margin-left:10px;">閉じる</button>
+   </h3>
+
+<div id="selectedMainNums" class="numbers"></div>
+
+  <br>
+
+  <!-- 分析ボタン -->
+  <button class="check-btn"
+  onclick="checkPrediction(10,event)">10回</button>
+
+  <button class="check-btn"
+  onclick="checkPrediction(20,event)">20回</button>
+
+  <button class="check-btn"
+  onclick="checkPrediction(30,event)">30回</button>
+
+  <button class="check-btn"
+  onclick="checkPrediction(50,event)">50回</button>
+
+  <button class="check-btn"
+  onclick="checkPrediction(70,event)">70回</button>
+
+  <button class="check-btn"
+  onclick="checkPrediction(100,event)">100回</button>
+
+  <!-- 結果 -->
+  <div id="checkResult"></div>
+
+</div>
+
+<!-- モーダル -->
+<div id="pickerModal" class="hidden" style="
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.8);
+  justify-content:center;
+  align-items:center;
+  z-index:1000;
+">
+
+  <div style="
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    max-width:500px;
+    width:90%;
+  ">
+
+    <h3>数字を選択（7個）</h3>
+
+    <div id="numberGrid" class="numbers"></div>
+
+    <p id="selectedNums"></p>
+    <p id="remainNums"></p>
+
+    <p id="pickerError" style="color:red;font-weight:bold;"></p>
+
+    <button onclick="clearNums()">クリア</button>
+    <button onclick="applyNums()">決定</button>
+    <button onclick="closePicker()">閉じる</button>
+
+  </div>
+</div>
+
+<script>
+const API="http://localhost:3001";
+
+let currentHistory = 0; // ← これ追加
+let mode="";
+let target="";
+let selectedAnalysis = "";
+let selectedRange = 0; 
+let currentCheck = 0;
+
+// =================
+// ローディング
+// =================
+function showLoading(text){
+  const o=document.getElementById("overlay");
+  o.innerText=text;
+  o.style.display="flex";
+}
+function hideLoading(){
+  document.getElementById("overlay").style.display="none";
+}
+
+// =================
+// 最新
+// =================
+async function loadLatest(){
+  showLoading("読み込み中…");
+
+  const res = await fetch(API + "/latest-result");
+  const d=await res.json();
+
+  document.getElementById("latestBox").innerHTML = `
+
+  <!-- タイトル -->
+  <div style="margin-bottom:20px;">
+
+    <h1 style="
+      color:#b8860b;
+      font-size:32px;
+      margin-bottom:10px;
+      text-shadow:
+        0 0 5px #ffeb3b,
+        0 0 10px #ff9800;
+    ">
+      抽選結果
+    </h1>
+
+    <p style="
+      color:#5d4037;
+      font-size:14px;
+      font-weight:bold;
+      line-height:1.7;
+    ">
+      ロト7の抽選結果です。<br>
+      本数字・ボーナス数字を確認できます。
+    </p>
+
+  </div>
+
+  <!-- 最新表示 -->
+  <div style="margin-bottom:20px;">
+
+    <div class="latest-badge">
+      最新
+    </div>
+
+    <h2 style="
+      margin-top:10px;
+      color:#333;
+      font-size:28px;
+    ">
+      第${d.round}回
+    </h2>
+
+  </div>
+
+
+
+  <div class="numbers">
+    ${renderNums(d.mainNumbers,"latest-main")}
+  </div>
+
+  <h3>ボーナス数字</h3>
+
+  <div class="numbers">
+    ${renderNums(d.bonusNumbers,"latest-bonus")}
+  </div>
+
+`;
+
+  hideLoading();
+}
+
+// =================
+// 表示
+// =================
+function getColor(num){
+
+  const colors = [
+    "#e53935","#1e88e5","#43a047","#fdd835","#8e24aa",
+    "#fb8c00","#00acc1","#6d4c41","#3949ab","#c0ca33",
+    "#d81b60","#00897b","#7cb342","#5e35b1","#ef5350",
+    "#039be5","#c2185b","#7b1fa2","#0288d1","#afb42b",
+    "#f4511e","#6a1b9a","#00838f","#9e9d24","#ad1457",
+    "#1565c0","#2e7d32","#f9a825","#4e342e","#283593",
+    "#558b2f","#c62828","#0277bd","#6d4c41","#4527a0",
+    "#2e7d32","#ff6f00"
+  ];
+
+  return colors[num - 1]; // ←ここ重要
+}
+
+// =============================
+// 数字表示
+// =============================
+function renderNums(arr,type){
+  return `<div class="numbers">`+
+    arr.map(n=>`
+      <span class="${type}">
+        ${n}
+      </span>
+    `).join("")+
+  `</div>`;
+}
+
+// =============================
+// 回数表示
+// =============================
+function renderCount(arr,type){
+
+  // データなし
+  if(!arr || arr.length === 0){
+    return "<p>該当した数字はありません</p>";
+  }
+
+  // 最大値取得
+  const max = Math.max(...arr.map(d => d.count ?? d.gap));
+
+  // HTML生成
+  return `<div class="numbers">` +
+
+    arr.map((d, index) => {
+
+      // 回数取得
+      const val = d.count ?? d.gap;
+
+      let level;
+
+      // =============================
+      // コールド
+      // =============================
+      if(type.includes("cold")){
+
+        if(val === 0){
+
+          level = 5;
+
+        }else{
+
+          level = max > 0
+            ? 6 - Math.ceil((val / max) * 5)
+            : 1;
+        }
+
+      // =============================
+      // ホット
+      // コールドと同じ考え方
+      // 同じ回数は同じ色
+      // =============================
+      }else if(type.includes("hot")){
+
+        // 出現回数を重複なしで取得
+        const uniqueCounts = [
+          ...new Set(arr.map(x => x.count))
+        ].sort((a,b)=>b-a);
+
+        // 順位取得
+        const rank = uniqueCounts.indexOf(val);
+
+        // レベル決定
+        level = 5 - rank;
+
+        // 最低1
+        if(level < 1){
+          level = 1;
+        }
+
+      // =============================
+      // その他
+      // =============================
+      }else{
+
+        level = max > 0
+          ? Math.ceil((val / max) * 5)
+          : 1;
+      }
+
+      // HTML返す
+      return `
+        <span class="${type}${level}">
+          ${d.num}
+          <small>${val}回</small>
+        </span>
+      `;
+
+    }).join("")
+
+  + `</div>`;
+}
+    
+
+// =============================
+// 出現間隔ランキング表示
+// =============================
+function renderInterval(arr){
+
+  // データがない場合
+  if(!arr || arr.length === 0){
+    return "<p>該当なし</p>";
+  }
+
+  return `
+    <div class="numbers">
+      ${arr.map(d=>`
+        <span class="hot${d.level}">
+          ${d.interval}回空き
+          <small>${d.count}回</small>
+        </span>
+      `).join("")}
+    </div>
+  `;
+}
+
+// =============================
+// 抽選結果の表示・非表示切替（トグル）
+// =============================
+function toggleDraw(round){
+
+  const el = document.getElementById(`draw-${round}`);
+
+  if(el.classList.contains("hidden")){
+    el.classList.remove("hidden"); // 表示
+  }else{
+    el.classList.add("hidden");    // 非表示
+  }
+}
+
+// =============================
+// 過去抽選数字の表示用関数
+// =============================
+function renderHistoryNums(arr, type){
+
+  return `<div class="numbers">` +
+    arr.map(num => {
+
+      let className;
+
+      if(type === "normal"){
+         className = "past-main";
+      }else{
+        className = "past-bonus";
+      }
+
+      return `
+        <span class="num ${className}">
+          ${num}
+        </span>
+      `;
+    }).join("") +
+  `</div>`;
+}
+
+  // =============================
+  // ここから追加（重要）
+  // =============================
+
+  // 分析ボタンのactiveをリセット
+  document.querySelectorAll(".analysis-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  // 回数ボタンのactiveをリセット
+  document.querySelectorAll(".range-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  // 分析状態もリセット
+  selectedAnalysis = "";
+
+  // 結果表示をクリア
+  document.getElementById("result-main").innerHTML = "";
+  document.getElementById("result-bonus").innerHTML = "";
+
+// 👇ここに追加
+function select(type, event){
+
+  if(!target){
+    document.getElementById("menuError").innerText =
+      "分析する数字を選択してください";
+    return;
+  }
+
+  // 🔥 同じボタンを押したら解除
+  if(selectedAnalysis === type){
+  selectedAnalysis = "";
+
+  event.target.classList.remove("active");
+
+  // 🔥 回数ボタンリセット
+  document.querySelectorAll(".range-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  // 🔥 結果リセット
+  document.getElementById("result-main").innerHTML = "";
+  document.getElementById("result-bonus").innerHTML = "";
+
+  // 🔥 ここが重要（表示を復活）
+  document.getElementById("analysisError").innerText =
+    "分析メニューを選択してください";
+
+  document.getElementById("desc-top").innerHTML = "";
+  document.getElementById("desc-bottom").innerHTML = "";
+
+  return;
+}
+
+    selectedAnalysis = type;
+
+    // 🔥 回数リセット
+    selectedRange = 0;
+
+  // 🔥 分析ボタン active制御
+  document.querySelectorAll(".analysis-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+  event.target.classList.add("active");
+
+  // 🔥 回数ボタンリセット
+  document.querySelectorAll(".range-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  // 🔥 結果リセット
+  document.getElementById("result-main").innerHTML = "";
+  document.getElementById("result-bonus").innerHTML = "";
+
+  // 上の説明
+  document.getElementById("desc-top").innerHTML =
+    descriptionsTop[type];
+
+  // 下の説明
+  document.getElementById("desc-bottom").innerHTML ="";
+    
+}
+
+function setTarget(type, event){
+
+  // 🔥 同じボタンを押したら解除
+  if(target === type){
+
+    target = "";
+
+    // 分析も解除
+    selectedAnalysis = "";
+    selectedRange = 0;
+    
+    // ボタン色戻す
+    event.target.classList.remove("active");
+
+    // 分析ボタン解除
+    document.querySelectorAll(".analysis-btn").forEach(b=>{
+      b.classList.remove("active");
+    });
+
+    // 回数ボタン解除
+    document.querySelectorAll(".range-btn").forEach(b=>{
+      b.classList.remove("active");
+    });
+
+    // 結果消す
+    document.getElementById("result-main").innerHTML = "";
+    document.getElementById("result-bonus").innerHTML = "";
+
+    // 説明消す
+    document.getElementById("desc-top").innerHTML = "";
+    document.getElementById("desc-bottom").innerHTML = "";
+
+    // ガイド表示を戻す
+    document.getElementById("targetError").innerText =
+      "本数字かボーナス数字を選択してください";
+
+    document.getElementById("analysisError").innerText =
+      "分析メニューを選択してください";
+
+    document.getElementById("rangeError").innerText =
+      "分析回数を選択してください";
+
+    return;
+  }
+
+    target = type;
+
+  // 🔥 これ追加（めちゃ重要）
+  selectedAnalysis = "";
+  selectedRange = 0;
+
+  // ボタンの見た目
+  document.querySelectorAll(".target-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+  event.target.classList.add("active");
+
+  // メニュー切り替え
+  if(type === "main"){
+    document.getElementById("mainMenu").style.display = "block";
+    document.getElementById("bonusMenu").style.display = "none";
+  }else{
+    document.getElementById("mainMenu").style.display = "none";
+    document.getElementById("bonusMenu").style.display = "block";
+  }
+
+    document.querySelectorAll(".analysis-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  document.querySelectorAll(".range-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+
+  document.getElementById("result-main").innerHTML = "";
+  document.getElementById("result-bonus").innerHTML = "";
+  
+  document.getElementById("analysisError").innerText =
+    "分析メニューを選択してください";
+
+  document.getElementById("desc-top").innerHTML = "";
+  document.getElementById("desc-bottom").innerHTML = "";
+     
+}
+
+// =============================
+// 分析選択
+// =============================
+function selectAnalysis(type){
+  selectedAnalysis = type;
+
+  // 🔥 回数リセット
+  selectedRange = 0;
+}
+
+// =============================
+// 本数字 / ボーナス切替
+// =============================
+function selectType(type){
+  selectedType = type;
+}
+
+// =============================
+//分析実行（これが本体）
+// =============================
+async function runAnalysis(limit, event){
+
+  // 🔥 同じボタンを押したら解除
+  if(selectedRange === limit){
+    selectedRange = 0;
+
+    event.target.classList.remove("active");
+
+    // 結果消す
+    document.getElementById("result-main").innerHTML = "";
+    document.getElementById("result-bonus").innerHTML = "";
+
+    // 説明戻す
+    document.getElementById("desc-top").innerHTML = "";
+    document.getElementById("desc-bottom").innerHTML ="";
+      
+
+    return;
+  }
+
+  // 🔥 ここから通常処理
+  if(!target){
+    return;
+  }
+
+  if(!selectedAnalysis){
+    return;
+  }
+
+  selectedRange = limit;
+
+  // ボタンactive制御
+  document.querySelectorAll(".range-btn").forEach(b=>{
+    b.classList.remove("active");
+  });
+  event.target.classList.add("active");
+
+  showLoading("分析中…");
+
+  const start = Date.now();
+
+  try{
+
+    const res = await fetch(API + "/analyze-all");
+
+    if(!res.ok){
+      throw new Error("APIエラー");
+    }
+
+    const allData = await res.json();
+
+    const data = selectedAnalysis === "sum"
+      ? allData[limit]["main"]
+      : allData[limit][target];
+
+    // 説明表示
+    document.getElementById("desc-top").innerHTML =
+      descriptionsTop[selectedAnalysis];
+
+      let html = `<h2>分析結果（${limit}回）</h2>`;
+
+    // 表示個数を計算（10回・20回などから決める）
+    const limitCount = getLimit(limit);
+
+
+    //ホットナンバー
+    if(selectedAnalysis==="hot"){
+
+      const hotList = data.hot;
+
+      const filtered = getHotNumbers(
+        data,
+        limitCount
+      );
+
+      //html += `<h3>ホットナンバー</h3>`;
+
+      html += `
+        <div style="
+          margin:10px 0;
+          padding:10px;
+          background:#fff3e0;
+          border-radius:8px;
+          font-size:14px;
+          color:#333;
+        ">
+          ${descriptionsBottom[selectedAnalysis]
+            .replace(/○回/g, limit + "回")}
+        </div>
+      `;
+
+      html += renderCount(filtered, "hot");
+    }
+
+  //出現間隔  
+
+    else if(selectedAnalysis==="interval"){
+
+  const ranking = data.intervalRanking;
+
+  console.log("intervalRanking =", ranking);
+
+  if(!ranking){
+    html += "<p>intervalデータなし</p>";
+  }else{
+
+    const filtered = ranking
+      .filter(item =>
+        item.interval >= 4 &&
+        item.interval <= 10
+      )
+      .sort((a,b)=>b.count - a.count);
+
+      console.log("filtered =", filtered);
+
+    //html += "<h3>出現間隔ランキング</h3>";
+
+    html += `
+      <div style="
+        margin:10px 0;
+        padding:10px;
+        background:#fff3e0;
+        border-radius:8px;
+        font-size:14px;
+        color:#333;
+      "> 
+        ${descriptionsBottom[selectedAnalysis]
+          .replace(/○回/g, limit + "回")}
+      </div>
+    `;
+
+// 出現間隔ランキング表示
+let displayCount = 0;
+
+const maxCount = Math.max(...filtered.map(x => x.count));
+
+// 上位5件だけに制限
+const top5 = filtered.slice(0, 5);
+
+// グラデーション用レベル付け
+const withLevel = top5.map(item => {
+  const level = maxCount > 0
+    ? Math.ceil((item.count / maxCount) * 5)
+    : 1;
+
+  return {
+    ...item,
+    level
+  };
+});
+
+// 横並び表示
+html += renderInterval(withLevel);
+
+}
+
+}
+//===============================
+//コールドナンバー
+//===============================
+else if(selectedAnalysis==="cold"){
+
+  const coldList = data.cold;
+
+  const getCount = n => Number(n.count ?? n.gap ?? 999);
+
+  const zeroList = coldList.filter(n => getCount(n) === 0);
+
+  let displayCold;
+
+  if(zeroList.length >= 5){
+    displayCold = zeroList.slice(0, 10);
+  }else{
+    const sorted = [...coldList].sort((a,b)=>getCount(a)-getCount(b));
+    displayCold = sorted.slice(0, 5);
+  }
+
+  //html += `<h3>コールドナンバー</h3>`;
+
+  html += `
+    <div style="
+      margin:10px 0;
+      padding:10px;
+      background:#fff3e0;
+      border-radius:8px;
+      font-size:14px;
+      color:#333;
+    ">
+      ${descriptionsBottom[selectedAnalysis]
+        .replace(/○回/g, limit + "回")}
+    </div>
+  `;
+
+  html += displayCold.length
+    ? renderCount(displayCold, "cold")
+    : "<p>該当した数字はありません</p>";
+}
+
+//==================================
+//奇数偶数
+//==================================
+else if(selectedAnalysis==="oddEven"){
+
+  console.log("oddEven表示処理入った");
+
+  const list = (data.oddEven || []);
+  const max = Math.max(...list.map(o => o.count));
+
+  //html += `<h3>奇数-偶数バランス</h3>`;
+
+  // 🔥 追加（ここ！）
+  html += `
+    <div style="
+      margin:10px 0;
+      padding:10px;
+      background:#fff3e0;
+      border-radius:8px;
+      font-size:14px;
+      color:#333;
+    ">
+      ${descriptionsBottom[selectedAnalysis].replace(/○回/g, limit + "回")}
+    </div>
+  `;
+
+  html += `<div class="numbers">`;
+
+  list.forEach(o => {
+    const level = max > 0
+      ? Math.ceil((o.count / max) * 5)
+      : 1;
+
+    const [odd, even] = o.pattern.split("-");
+
+    html += `
+      <span class="hot${level}">
+        奇数${odd} 偶数${even}
+        <small>${o.count}回</small>
+      </span>
+    `;
+  });
+
+  html += `</div>`;
+}
+
+//===================================
+//ゾーン分析
+//===================================
+else if(selectedAnalysis==="zone"){
+
+  let map = {};
+
+  const res2 = await fetch(API + "/all");
+  const historyData = await res2.json();
+
+  const targetDraws = historyData.slice(0, limit);
+
+  targetDraws.forEach(draw=>{
+    let zones = [0,0,0,0];
+
+    const nums = target === "main"
+      ? draw.mainNumbers
+      : draw.bonusNumbers;
+
+    nums.forEach(num=>{
+      if(num <= 10) zones[0]++;
+      else if(num <= 20) zones[1]++;
+      else if(num <= 30) zones[2]++;
+      else zones[3]++;
+    });
+
+    let pattern = zones.join("-");
+    map[pattern] = (map[pattern] || 0) + 1;
+  });
+
+  const sorted = Object.entries(map)
+    .sort((a,b)=>b[1]-a[1])
+    .slice(0, 5);
+
+  //html += `<h3>ゾーンパターン（上位5）</h3>`;
+
+  // 🔥 追加（ここ！）
+  html += `
+  <div style="
+    margin:10px 0;
+    padding:10px;
+    background:#fff3e0;
+    border-radius:8px;
+    font-size:14px;
+  ">
+      ${descriptionsBottom[selectedAnalysis].replace(/○回/g, limit + "回")}
+    </div>
+  `;
+
+  html += `<div style="display:flex; flex-wrap:wrap; justify-content:center;">`;
+
+  html += sorted.map(([pattern,count])=>{
+    const level = Math.ceil((count / sorted[0][1]) * 5);
+
+    return `
+      <div style="margin:10px;">
+        <div class="zone-pattern hot${level}">
+          <div>${pattern}</div>
+          <small>${count}回</small>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  html += `</div>`;
+} 
+
+//================================
+//合計値
+//================================
+else if(selectedAnalysis==="sum"){
+
+  const d = data;
+
+  html += `
+    <div style="text-align:center;">
+      <!-- <h3>合計値分析</h3> -->
+
+      <!-- 🔥 追加（ここ！） -->
+      <div style="
+        margin:10px 0;
+        padding:10px;
+        background:#fff3e0;
+        border-radius:8px;
+        font-size:14px;
+        color:#333;
+      ">
+        ${descriptionsBottom[selectedAnalysis].replace(/○回/g, limit + "回")}
+      </div>
+
+      <div class="sum-box">
+
+        <div class="sum-item">
+          <div class="sum-label">平均値</div>
+          <div class="sum-value">${d.avg}</div>
+        </div>
+
+        <div class="sum-item">
+          <div class="sum-label">中央値</div>
+          <div class="sum-value">${d.median}</div>
+        </div>
+
+        <div class="sum-item">
+          <div class="sum-label">最小値</div>
+          <div class="sum-value">${d.min}</div>
+        </div>
+
+        <div class="sum-item">
+          <div class="sum-label">最大値</div>
+          <div class="sum-value">${d.max}</div>
+        </div>
+
+      </div>
+    </div>
+  `;
+}
+    
+    if(target === "main"){
+      document.getElementById("result-main").innerHTML = html;
+     }else{
+      document.getElementById("result-bonus").innerHTML = html;
+     }
+
+    }catch(e){
+      console.error(e);
+
+      if(target === "main"){
+       document.getElementById("result-main").innerHTML = "分析エラー";
+      }else{
+        document.getElementById("result-bonus").innerHTML = "分析エラー";
+      }
+    }
+
+  // 👇ここ超重要（最低1秒表示）
+  const elapsed = Date.now() - start;
+  const wait = Math.max(1000 - elapsed, 0);
+  await new Promise(r => setTimeout(r, wait));
+
+  hideLoading();
+}
+
+// =============================
+// 分析説明テキスト
+// =============================
+const descriptionsTop = {
+  hot: "よく選ばれる「勢いのある数字」の分析です。",
+  cold: "あまり選ばれていない「勢いのない数字」の分析です。",
+  interval: "出現間隔の回数の分析です",
+  oddEven: "奇数と偶数の出現バランスの分析です",
+  sum: "7個の数字の合計値の分析です",
+  zone: "ゾーン別の出現傾向の分析です"
+};
+
+const descriptionsBottom = {
+  hot: "過去○回の抽選で、出現した数字と回数を表示しています。",
+  cold: "過去○回の抽選で、出現した数字と回数を表示しています。",
+  interval: "過去○回の抽選での出現間隔と回数を表示しています。",
+  oddEven: "過去○回の抽選における奇数と偶数の組み合わせパターンを表示しています。",
+  sum: "過去○回の合計値の平均値・中央値・最小値・最大値を表示しています",
+  zone: "数字を「1～10」「11～20」「21～30」「31～37」の4ゾーンに分け、各回の分布パターンを表示しています。<br>出現回数の多い上位5位を表示しています"
+        
+};
+
+// =============================
+// AI予想 制限管理
+// =============================
+let aiCount = 0;
+let aiStartTime = Date.now();
+
+function closeAI(){
+  document.getElementById("ai").innerHTML = "";
+
+  document.getElementById("aiBtn")
+    .classList.remove("active-ai");
+
+}
+
+// =================
+// AI予想（制限＋強化版）
+// =================
+async function predict(){
+
+  // =============================
+  // ランダムで1つ選ぶ関数
+  // =============================
+  function randomPick(arr){
+   return arr[Math.floor(Math.random() * arr.length)];
+  }
+
+  // =====================
+  // 🔥 制限チェック
+  // =====================
+  const now = Date.now();
+
+  // 5分リセット
+  if(now - aiStartTime > 5 * 60 * 1000){
+    aiCount = 0;
+    aiStartTime = now;
+  }
+
+  if(aiCount >= 5){
+    document.getElementById("ai").innerHTML = `
+      <p class="error">予想は5回までです。</p>
+    `;
+    return;
+  }
+
+  aiCount++;
+
+  showLoading("AIが予想中…");
+
+  const start = Date.now();
+
+  try{
+
+    // =====================
+    // 🔥 データ取得
+    // =====================
+    const res = await fetch(API + "/analyze-all");
+    const allData = await res.json();
+
+    const data = allData[50]["main"];
+
+    const res2 = await fetch(API + "/all");
+    const history = await res2.json();
+
+    // =====================
+    // 🔥 ① 分析データから2個
+    // =====================
+    // =====================
+    // ホット 上位順位ベース
+    // 最大5個
+    // =====================
+
+    // 出現回数ごとにグループ化
+    const hotGroups = {};
+
+    data.hot.forEach(d=>{
+
+      if(!hotGroups[d.count]){
+        hotGroups[d.count] = [];
+      }
+
+      hotGroups[d.count].push(d.num);
+
+    });
+
+    // 出現回数順
+    const sortedCounts = Object.keys(hotGroups)
+      .map(Number)
+      .sort((a,b)=>b-a);
+
+    // 最大5個
+    let hot = [];
+
+    for(const count of sortedCounts){
+
+      const numsAtRank = hotGroups[count];
+
+      // 5個超えるなら終了
+      if(hot.length + numsAtRank.length > 5){
+        break;
+      }
+
+      hot.push(...numsAtRank);
+     }
+        const cold = data.cold.slice(0,10).map(n=>n.num);
+
+        const pick1 = randomPick(hot);
+        const pick2 = randomPick(cold);
+
+        // =====================
+        // 🔥 ② 過去データから1個
+        // =====================
+        const recent = history.slice(0,20); // 直近20回
+
+        const allNums = [];
+        recent.forEach(d=>{
+          allNums.push(...d.mainNumbers);
+        });
+
+        const pick3 = randomPick(allNums);
+
+        // =====================
+        // 🔥 ③ 残りランダム
+        // =====================
+        let result = [pick1, pick2, pick3];
+
+        while(result.length < 7){
+          const n = Math.floor(Math.random()*37)+1;
+          if(!result.includes(n)){
+            result.push(n);
+          }
+        }
+
+        result = [...new Set(result)].sort((a,b)=>a-b);
+
+        // ボタンを選択状態
+        document.getElementById("aiBtn")
+          .classList.add("active-ai");
+
+    // =====================
+    // 表示
+    // =====================
+    document.getElementById("ai").innerHTML = `
+      <h3 style="margin-bottom:12px;">AI予想</h3>
+
+      <div class="numbers">
+        ${result.map(n => `
+          <span class="ai-num">
+            ${n}
+          </span>
+        `).join("")}
+      </div>
+    `;
+
+    }catch(e){
+      console.error(e);
+
+      document.getElementById("ai").innerHTML = `
+        <p class="error">AI予想エラー</p>
+        <p style="font-size:12px;color:red;">${e.message}</p>
+      `;
+    }
+  
+
+  const elapsed = Date.now() - start;
+  const wait = Math.max(1200 - elapsed, 0);
+  await new Promise(r => setTimeout(r, wait));
+
+  hideLoading();
+}
+
+// =====================
+// ホット共通取得
+// =====================
+function getHotNumbers(data, limitCount){
+
+  const targetHot = data.hot.filter(
+    n => n.count >= 3
+  );
+
+  return targetHot.slice(0, limitCount);
+}
+
+// =================
+// 予想チェック
+// =================
+async function checkPrediction(limit){
+
+  document.querySelectorAll(".check-btn")
+    .forEach(b=>b.classList.remove("active"));
+
+  if(currentCheck === limit){
+
+    document.getElementById("checkResult").innerHTML = "";
+
+    currentCheck = 0;
+
+    return;
+  } 
+
+  event.target.classList.add("active");
+
+  currentCheck = limit;
+
+  const limitMap = {
+    10: 2,
+    20: 4,
+    30: 5,
+    50: 5,
+    100: 5
+  };
+
+const limitCount = limitMap[limit] || 5;
+
+  // 🔥 ① エラー初期化（毎回リセット）
+  
+  document.getElementById("analysisError").innerText =  "分析メニューを選択してください";
+
+  // 🔥 ② 7個チェック
+  if(selectedNums.length !== 7){
+    document.getElementById("analysisError").innerText =
+      "数字を7個選択してください";
+    return;
+  }
+
+  // 🔥 ③ 選択数字を使う
+  const nums = [...selectedNums].sort((a,b)=>a-b);
+
+  // =====================
+  // APIから分析データ取得
+  // =====================
+  const res = await fetch(API + "/analyze-all");
+  const allData = await res.json();
+
+  const data = allData[String(limit)]["main"];
+  let html = `
+    <div style="
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:10px;
+    ">
+      <h3>分析結果</h3>
+    </div>
+
+    <div id="resultBody">
+  `;
+  
+
+  // =====================
+  // 🔥 ホットナンバー判定
+  // =====================
+  const hotNums = getHotNumbers(
+    data,
+    limitCount
+  ).map(d=>d.num);
+
+  // 予想数字の中でホットに該当するもの
+  const hitHot = nums.filter
+  (n=>hotNums.includes(n));
+
+  html += `
+    <p class="check-box">
+      🔥ホット：
+      ${hitHot.length ? hitHot.join(", ") : "該当なし"}
+    </>
+  `;
+
+  // =====================
+  // ❄️ コールドナンバー判定
+  // =====================
+  const coldNums = data.cold
+  .slice(0,5)
+  .map(d=>d.num);
+
+  const hitCold = nums.filter(n=>coldNums.includes(n));
+
+  html += `
+    <p class="check-box">
+      ❄️コールド：
+      ${hitCold.length ? hitCold.join(", ") : "該当なし"}
+    </p>
+  `;
+
+  // =====================
+  // ⏱ 出現間隔
+  // =====================
+  html += `
+    <p class="check-box">
+    ⏱出現間隔：</p>`;
+
+  // 過去データ取得
+  const historyRes = await fetch(API + "/all");
+  const history = await historyRes.json();
+
+  nums.forEach(n=>{
+
+    let gap = -1;
+
+    for(let i = 0; i < history.length; i++){
+
+      const draw = history[i];
+
+      // 本数字＋ボーナス数字も含める場合
+      const allNums = [
+        ...draw.mainNumbers,
+        ...draw.bonusNumbers
+      ];
+
+      if(allNums.includes(n)){
+
+        gap = i;
+        break;
+      }
+    }
+
+    if(gap >= 0){
+
+      html += `
+        ${n}：${gap}回空き
+        <br>
+      `;
+
+    }else{
+
+      html += `
+        ${n}：未出現
+        <br>
+      `;
+    }
+
+  });
+
+  // =====================
+  // ⚖️ 奇数・偶数
+  // =====================
+  const odd = nums.filter(n=>n%2 !== 0).length;
+  const even = nums.length - odd;
+
+  html += `
+     <p class="check-box">
+          ⚖️奇数偶数：${odd}-${even}
+    </p>
+  `;
+
+  // =====================
+  // 📊 合計値
+  // =====================
+  const sum = nums.reduce((a,b)=>a+b,0);
+
+  // 中央値との差
+  const diff = sum - data.median;
+
+  html += `
+    <p class="check-box">
+      📊合計：${sum}
+      （中央値${diff>=0?"+":""}${diff}）
+    </p>
+  `;
+
+  // =====================
+  // 🧱 ゾーン分析
+  // =====================
+  let zones=[0,0,0,0];
+
+  nums.forEach(n=>{
+    if(n<=10) zones[0]++;
+    else if(n<=20) zones[1]++;
+    else if(n<=30) zones[2]++;
+    else zones[3]++;
+  });
+
+  const pattern = zones.join("-");
+
+  html += `
+    <p class="check-box">
+          🧱ゾーン：${pattern}
+    </p>
+  `;
+
+  // =====================
+  // 表示
+  // =====================
+  html += `</div>`;
+
+  document.getElementById("checkResult").innerHTML = html;
+}
+
+// =================
+// 過去抽選表示
+// =================
+async function loadHistoryDraws(n, e){
+
+    document.querySelectorAll(".history-btn").forEach(b=>b.classList.remove("active"));
+
+  // 👇 今押したボタンだけactive
+  e.target.classList.add("active");
+
+  if(currentHistory === n){
+    document.getElementById("pastDraws").innerHTML = "";
+    currentHistory = 0;
+
+     e.target.classList.remove("active"); // ←追加
+
+    return;
+  }
+
+  showLoading("過去データ読み込み中…");
+
+  try{
+
+    const res = await fetch(API + "/all");
+
+    if(!res.ok){
+      throw new Error("APIエラー");
+    }
+
+    const all = await res.json();
+
+    const clean = all.filter(d => d && d.round);
+    
+    // ※最新データを除外して表示（仕様）
+    const target = clean
+      .slice(1, n + 1)
+      .map(d => ({
+        ...d,
+        round: d.round
+      }));
+
+    const countMap = {};
+    target.forEach(d=>{
+      [...d.mainNumbers, ...d.bonusNumbers].forEach(num=>{
+        countMap[num] = (countMap[num] || 0) + 1;
+      });
+    });
+
+    let html = `<h3>直近${n}回の抽選結果</h3>`;
+
+  target.forEach(d=>{
+  html += `
+    <div style="margin:10px;padding:10px;border-bottom:1px solid #ddd;">
+      
+      <b>第${d.round}回</b>
+
+      <div style="margin-top:5px;">
+        <small class="label">本数字</small>
+        ${renderHistoryNums(d.mainNumbers,"normal")}
+      </div>
+
+      <div style="margin-top:5px;">
+        <small class="label">ボーナス数字</small>
+        ${renderHistoryNums(d.bonusNumbers,"bonus",countMap)}
+      </div>
+
+    </div>
+  `;
+});  
+
+    document.getElementById("pastDraws").innerHTML = html;
+
+    // 👇 今表示している回数を記録
+    currentHistory = n;
+
+  }catch(e){
+    console.error(e);
+    document.getElementById("pastDraws").innerHTML = "取得エラー";
+  }
+
+  hideLoading();
+}
+
+// =============================
+// 表示する個数を計算する関数
+// =============================
+// drawCount : 分析対象の回数（10回・20回など）
+// percent   : 何％表示するか（今回は20%）
+// max       : 上限（今回は5個）
+function getLimit(drawCount, percent = 0.2, max = 5){
+
+  // ① 抽選回数 × 20% で表示個数を計算
+  let limit = Math.ceil(drawCount * percent);
+
+  // ② 上限チェック（5個を超えたら5にする）
+  if(limit > max){
+    limit = max;
+  }
+
+  // ③ 最終的な表示個数を返す
+  return limit;
+}
+
+// =================
+// 数字選択モーダル（ここに追加）
+// =================
+
+// 👇ここに全部貼る
+let selectedNums = [];
+
+function openPicker(){
+    const modal = document.getElementById("pickerModal");
+    modal.style.display = "flex"; // ←ここで表示
+    renderGrid();
+
+     // エラー初期化
+     document.getElementById("pickerError").innerText = "";
+}
+
+function closePicker(){
+ document.getElementById("pickerModal").style.display = "none"; 
+}
+
+function renderGrid(){
+
+  let html = "";
+
+  for(let i=1;i<=37;i++){
+
+    const active = selectedNums.includes(i);
+
+    html += `
+      <span onclick="toggleNum(${i})"
+        style="
+          background:${active ? '#ff7043' : '#90caf9'};
+          color:white;
+          margin:4px;
+          padding:10px 12px;
+          border-radius:50%;
+          cursor:pointer;
+          display:inline-block;
+          min-width:32px;
+          text-align:center;
+        ">
+        ${i}
+      </span>
+    `;
+  }
+
+  document.getElementById("numberGrid").innerHTML = html;
+
+  // 🔥 選択中表示
+  document.getElementById("selectedNums").innerText =
+    selectedNums.length
+      ? "選択中：" + selectedNums.sort((a,b)=>a-b).join(",")
+      : "選択中：なし";
+
+  // 🔥 残り表示（追加）
+  document.getElementById("remainNums").innerText =
+    `残り：${7 - selectedNums.length}個`;
+}
+
+function toggleNum(num){
+
+  // エラー表示エリア取得
+  const error = document.getElementById("pickerError");
+
+  // すでに選択されている場合 → 解除
+  if(selectedNums.includes(num)){
+    selectedNums = selectedNums.filter(n=>n!==num);
+
+    // エラー消す
+    error.innerText = "";
+
+  }else{
+
+    // 7個以上選ぼうとした場合
+    if(selectedNums.length >= 7){
+      error.innerText = "7個までしか選べません";
+      return;
+    }
+
+    // 追加
+    selectedNums.push(num);
+
+    // エラー消す
+    error.innerText = "";
+  }
+
+  // 再描画
+  renderGrid();
+}
+
+function clearNums(){
+  selectedNums = [];
+  renderGrid();
+}
+
+function applyNums(){
+
+  const error = document.getElementById("pickerError");
+
+  // 7個チェック
+  if(selectedNums.length !== 7){
+    error.innerText = "7個選んでください";
+    return;
+  }
+
+  const sorted = selectedNums.sort((a,b)=>a-b);
+
+  // メイン画面に表示
+  const main = document.getElementById("selectedMainNums");
+  if(main){
+    main.innerHTML = sorted.map(n=>`
+      <span class="normal">${n}</span>
+    `).join("");
+  }
+
+  // 🔥 ここが重要（閉じる）
+  closePicker();
+}
+
+// =============================
+// 選択数字の表示切替 
+// =============================
+let selectedVisible = true;
+
+function toggleSelected(event){
+
+  const el = document.getElementById("selectedMainNums");
+  const btn = event.target; // ←追加
+
+  selectedVisible = !selectedVisible;
+
+  el.style.display = selectedVisible ? "flex" : "none";
+
+  btn.innerText = selectedVisible ? "閉じる" : "表示";
+}
+
+// =============================
+// 分析結果の表示切替
+// =============================
+let resultVisible = true;
+
+function toggleResult(event){
+
+  const body = document.getElementById("resultBody");
+  const btn = event.target;
+
+  resultVisible = !resultVisible;
+
+  body.style.display = resultVisible ? "block" : "none";
+
+  btn.innerText = resultVisible ? "閉じる" : "表示";
+}
+
+// =================
+// 起動
+// =================
+loadLatest();
+
+// 🔥 初期表示（ここに追加）
+document.getElementById("selectedMainNums").innerHTML =
+  "<p style='color:#999;'>まだ数字が選択されていません</p>";
+</script>
+
+<!-- =========================
+  Service Worker登録
+  PWA化・オフライン対応
+========================= -->
+<script>
+
+// Service Worker対応ブラウザか確認
+if("serviceWorker" in navigator){
+
+  // Service Worker登録
+  navigator.serviceWorker
+    .register("/service-worker.js")
+
+    // 成功
+    .then(()=>{
+      console.log("✅ Service Worker 登録成功");
+    })
+
+    // 失敗
+    .catch(err=>{
+      console.log("❌ Service Worker失敗", err);
+    });
+
+}
+
+</script>
+
+</body>
+</html>
