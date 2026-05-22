@@ -868,71 +868,91 @@ function hideLoading(){
 // 最新
 // =================
 async function loadLatest(){
+
   showLoading("読み込み中…");
 
-  const res = await fetch(API + "/latest-result");
-  const d=await res.json();
+  try{
 
-  document.getElementById("latestBox").innerHTML = `
+    const res = await fetch(API + "/latest-result");
 
-  <!-- タイトル -->
-  <div style="margin-bottom:20px;">
+    if(!res.ok){
+      throw new Error("APIエラー");
+    }
 
-    <h1 style="
-      color:#b8860b;
-      font-size:32px;
-      margin-bottom:10px;
-      text-shadow:
-        0 0 5px #ffeb3b,
-        0 0 10px #ff9800;
-    ">
-      抽選結果
-    </h1>
+    const d = await res.json();
 
-    <p style="
-      color:#5d4037;
-      font-size:14px;
-      font-weight:bold;
-      line-height:1.7;
-    ">
-      ロト7の抽選結果です。<br>
-      本数字・ボーナス数字を確認できます。
-    </p>
+    document.getElementById("latestBox").innerHTML = `
 
-  </div>
+    <!-- タイトル -->
+    <div style="margin-bottom:20px;">
 
-  <!-- 最新表示 -->
-  <div style="margin-bottom:20px;">
+      <h1 style="
+        color:#b8860b;
+        font-size:32px;
+        margin-bottom:10px;
+        text-shadow:
+          0 0 5px #ffeb3b,
+          0 0 10px #ff9800;
+      ">
+        抽選結果
+      </h1>
 
-    <div class="latest-badge">
-      最新
+      <p style="
+        color:#5d4037;
+        font-size:14px;
+        font-weight:bold;
+        line-height:1.7;
+      ">
+        ロト7の抽選結果です。<br>
+        本数字・ボーナス数字を確認できます。
+      </p>
+
     </div>
 
-    <h2 style="
-      margin-top:10px;
-      color:#333;
-      font-size:28px;
-    ">
-      第${d.round}回
-    </h2>
+    <!-- 最新表示 -->
+    <div style="margin-bottom:20px;">
 
-  </div>
+      <div class="latest-badge">
+        最新
+      </div>
 
+      <h2 style="
+        margin-top:10px;
+        color:#333;
+        font-size:28px;
+      ">
+        第${d.round}回
+      </h2>
 
+    </div>
 
-  <div class="numbers">
-    ${renderNums(d.mainNumbers,"latest-main")}
-  </div>
+    <div class="numbers">
+      ${renderNums(d.mainNumbers,"latest-main")}
+    </div>
 
-  <h3>ボーナス数字</h3>
+    <h3>ボーナス数字</h3>
 
-  <div class="numbers">
-    ${renderNums(d.bonusNumbers,"latest-bonus")}
-  </div>
+    <div class="numbers">
+      ${renderNums(d.bonusNumbers,"latest-bonus")}
+    </div>
 
-`;
+    `;
 
-  hideLoading();
+  }catch(e){
+
+    console.error(e);
+
+    document.getElementById("latestBox").innerHTML = `
+      <p style="color:red;">
+        最新データの取得に失敗しました
+      </p>
+    `;
+
+  }finally{
+
+    hideLoading();
+
+  }
 }
 
 // =================
