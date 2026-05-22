@@ -19,6 +19,9 @@ const cheerio = require("cheerio");
 
 const app = express();
 
+// publicフォルダ公開
+app.use(express.static(path.join(__dirname, "public")));
+
 console.log(__dirname);
 
 app.use(express.static(__dirname));
