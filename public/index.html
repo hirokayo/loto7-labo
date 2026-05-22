@@ -1684,28 +1684,40 @@ else if(selectedAnalysis==="sum"){
   `;
 }
     
-    if(target === "main"){
+        if(target === "main"){
       document.getElementById("result-main").innerHTML = html;
-     }else{
+    }else{
       document.getElementById("result-bonus").innerHTML = html;
-     }
-
-    }catch(e){
-      console.error(e);
-
-      if(target === "main"){
-       document.getElementById("result-main").innerHTML = "分析エラー";
-      }else{
-        document.getElementById("result-bonus").innerHTML = "分析エラー";
-      }
     }
 
-  // 👇ここ超重要（最低1秒表示）
-  const elapsed = Date.now() - start;
-  const wait = Math.max(1000 - elapsed, 0);
-  await new Promise(r => setTimeout(r, wait));
+  }catch(e){
 
-  hideLoading();
+    console.error(e);
+
+    if(target === "main"){
+
+      document.getElementById("result-main").innerHTML =
+        "分析エラー";
+
+    }else{
+
+      document.getElementById("result-bonus").innerHTML =
+        "分析エラー";
+
+    }
+
+  }finally{
+
+    const elapsed = Date.now() - start;
+
+    const wait = Math.max(1000 - elapsed, 0);
+
+    await new Promise(r => setTimeout(r, wait));
+
+    hideLoading();
+
+  }
+
 }
 
 // =============================
