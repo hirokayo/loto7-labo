@@ -24,12 +24,6 @@ app.use(express.static(path.join(__dirname, "public")));
 
 console.log(__dirname);
 
-app.use(express.static(__dirname));
-
-app.get("/manifest.json", (req,res)=>{
-  res.sendFile(__dirname + "/manifest.json");
-});
-
 // ==============================
 // ミドルウェア
 // ==============================
