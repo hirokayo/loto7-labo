@@ -300,7 +300,7 @@ function calcZone(list) {
 
   let z1 = 0, z2 = 0, z3 = 0;
 
-  const flat = list.flat();
+  const flat = [].concat(...list);
 
   flat.forEach(n => {
     if (n <= 12) z1++;
