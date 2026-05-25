@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://loto7-labo.onrender.com/sitemap.xml
