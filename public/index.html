@@ -18,9 +18,6 @@
 <meta name="viewport"
 content="width=device-width, initial-scale=1.0">
 
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-K66YNH70HH"></script>
-
 <script>
   window.dataLayer = window.dataLayer || [];
 
@@ -1159,32 +1156,12 @@ function renderHistoryNums(arr, type){
   `</div>`;
 }
 
-  // =============================
-  // ここから追加（重要）
-  // =============================
-
-  // 分析ボタンのactiveをリセット
-  document.querySelectorAll(".analysis-btn").forEach(b=>{
-    b.classList.remove("active");
-  });
-
-  // 回数ボタンのactiveをリセット
-  document.querySelectorAll(".range-btn").forEach(b=>{
-    b.classList.remove("active");
-  });
-
-  // 分析状態もリセット
-  selectedAnalysis = "";
-
-  // 結果表示をクリア
-  document.getElementById("result-main").innerHTML = "";
-  document.getElementById("result-bonus").innerHTML = "";
 
 // 👇ここに追加
 function select(type, event){
 
   if(!target){
-    document.getElementById("menuError").innerText =
+    document.getElementById("analysisError").innerText =
       "分析する数字を選択してください";
     return;
   }
@@ -1952,7 +1929,7 @@ function getHotNumbers(data, limitCount){
 // =================
 // 予想チェック
 // =================
-async function checkPrediction(limit){
+async function checkPrediction(limit, event){
 
   document.querySelectorAll(".check-btn")
     .forEach(b=>b.classList.remove("active"));
@@ -2447,6 +2424,11 @@ if("serviceWorker" in navigator){
 
 </script>
 
+<footer>
+  <a href="/">トップ</a>
+  <a href="contact.html">お問い合わせ</a>
+  <a href="privacy.html">プライバシーポリシー</a>
+</footer>
 
 </body>
 </html>
