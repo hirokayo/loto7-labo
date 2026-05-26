@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>お問い合わせ | ロト7 Labo</title>
+
+<style>
+body{
+  font-family:sans-serif;
+  background:#fafafa;
+  padding:20px;
+  line-height:1.8;
+  color:#333;
+}
+
+.container{
+  max-width:800px;
+  margin:auto;
+  background:white;
+  padding:30px;
+  border-radius:12px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.08);
+}
+
+h1{
+  color:#0d47a1;
+}
+
+.mail{
+  font-size:20px;
+  font-weight:bold;
+  margin-top:20px;
+  color:#1565c0;
+}
+
+.mail a{
+  color:#1565c0;
+  text-decoration:none;
+}
+
+.mail a:hover{
+  text-decoration:underline;
+}
+
+input,
+textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #ccc;
+  border-radius:8px;
+  font-size:16px;
+  box-sizing:border-box;
+}
+
+button{
+  background:#1565c0;
+  color:white;
+  border:none;
+  padding:12px 24px;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+button:hover{
+  opacity:0.9;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>お問い合わせ</h1>
+
+<p>
+ロト7 Labo に関するお問い合わせは、
+以下のメールアドレスまでお願いいたします。
+</p>
+
+<form action="https://formspree.io/f/xpqnyjvp" method="POST">
+
+<label>お名前</label><br>
+<input type="text" name="name" required><br><br>
+
+<label>メールアドレス</label><br>
+<input type="email" name="email" required><br><br>
+
+<label>お問い合わせ内容</label><br>
+<textarea name="message" rows="6" required></textarea><br><br>
+
+<button type="submit">送信する</button>
+
+</form>
+
+<p style="margin-top:30px;">
+内容を確認後、必要に応じてご返信いたします。
+</p>
+
+</div>
+
+</body>
+</html>
